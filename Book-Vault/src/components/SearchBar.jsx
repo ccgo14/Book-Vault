@@ -2,10 +2,16 @@ import { useState } from 'react';
 
 export default function SearchBar({ onSearch, loading }) {
   const [query, setQuery] = useState('');
+  const [error, setError] = useState('');
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (query.trim()) onSearch(query.trim());
+    if (!query.trim()) {
+        setError("Please enter a book to be searched");
+        return;
+    }
+    setError("")
+    onSearch(query.trim());
   }
 
   return (
@@ -15,8 +21,11 @@ export default function SearchBar({ onSearch, loading }) {
         placeholder="Search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        className = 'border rounded-xl p-0.5 m-1'
       />
-      <button type="submit" disabled={loading || !query.trim()}>
+      <button type="submit" 
+      disabled={loading || !query.trim()} 
+      className='border rounded-xl p-0.5 m-1 cursor-pointer'>
         {loading ? 'Searching…' : 'Search'}
       </button>
     </form>
