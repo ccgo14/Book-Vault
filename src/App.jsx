@@ -26,23 +26,24 @@ export default function App() {
         setIsLoading(false);
       });
   }, []);
-  const handleAddBook = (newBook) => setBooks((prev) => [...prev, newBook]);
+const handleAddBook = (newBook) => setBooks((prev) => [...prev, newBook]);
 
 const onDeleteBook = (id) => {
-  setBooks(books.filter(book => book.id !== id));
-};
-const onUpdateBook = (updatedBook) => {
-  setBooks(books.map(book => 
-    book.id === updatedBook.id ? updatedBook : book
-  ));
-};
+    setBooks((prev) => prev.filter(book => book.id !== id));
+  };
 
-
+  const onUpdateBook = (updatedBook) => {
+    setBooks((prev) => prev.map(book => 
+      book.id === updatedBook.id ? updatedBook : book
+    ));
+  };
   
-  const displayedBooks = books.filter((book) =>
-    book.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    book.author?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+ const displayedBooks = books.filter((book) => {
+    const title = book.title?.toLowerCase() || "";
+    const author = book.author?.toLowerCase() || "";
+    const search = searchTerm.toLowerCase();
+    return title.includes(search) || author.includes(search);
+  });
 
   return (
     <div className="flex min-h-screen bg-brand-cream/10 text-brand-stone selection:bg-brand-amber/20">
