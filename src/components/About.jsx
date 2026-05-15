@@ -27,7 +27,7 @@ export default function About() {
     { name: "Calvin", role: "Library & Data Display" },
     { name: "Roy", role: "UI/UX & Routing" },
     { name: "Adrian", role: "API Integration" },
-    { name: "Lynclyne", role: "QA & Documentation" },
+    { name: "Lyndsey", role: "QA & Documentation" },
   ];
 
   return (
