@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import BookCard from './BookCard';
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,24 +9,31 @@ function Discovery({ onAddBook, existingBooks = [] }) {
   const [error, setError] = useState(null);
   const [savingIds, setSavingIds] = useState(new Set());
   
-  // Abort controller prevents race conditions
   const abortControllerRef = useRef(null);
+
+  // Clean up ongoing fetches when component unmounts
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const handleSearch = useCallback((query) => {
     const cleanQuery = query.trim();
     if (!cleanQuery || cleanQuery.length < 2) return;
 
-    // Cancel the previous unfinished search request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+    
     abortControllerRef.current = new AbortController();
-
     setLoading(true);
     setError(null);
 
-    fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(cleanQuery)}&limit=12`, {
-      signal: abortControllerRef.current.signal
+    fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(cleanQuery)}&limit=12`, { 
+      signal: abortControllerRef.current.signal 
     })
       .then(res => {
         if (res.status === 422) throw new Error("Search term too short or broad for the server.");
@@ -34,7 +41,7 @@ function Discovery({ onAddBook, existingBooks = [] }) {
         return res.json();
       })
       .then(data => {
-        const results = data.docs.map(book => ({
+        const results = (data.docs || []).map(book => ({
           id: book.key,
           title: book.title,
           author: book.author_name ? book.author_name[0] : "Unknown Author",
@@ -43,7 +50,7 @@ function Discovery({ onAddBook, existingBooks = [] }) {
         setBooks(results);
       })
       .catch((err) => {
-        if (err.name === 'AbortError') return; // Ignore intentional cancellations
+        if (err.name === 'AbortError') return;
         console.error("Discovery Error:", err);
         setError(err.message);
         setBooks([]);
@@ -57,8 +64,12 @@ function Discovery({ onAddBook, existingBooks = [] }) {
 
   const addToLibrary = async (book) => {
     if (savingIds.has(book.id)) return;
-
-    setSavingIds(prev => new Set(prev).add(book.id));
+    
+    setSavingIds(prev => {
+      const next = new Set(prev);
+      next.add(book.id);
+      return next;
+    });
 
     try {
       const res = await fetch('https://6a06d5f6c83ba8ad9b3df174.mockapi.io/books', {
@@ -75,7 +86,7 @@ function Discovery({ onAddBook, existingBooks = [] }) {
       
       const savedBook = await res.json();
       if (onAddBook) onAddBook(savedBook);
-      alert(`Added "${book.title}" to your library!`);
+      
     } catch (err) {
       console.error("Save Error:", err);
       alert(err.message);
@@ -89,7 +100,7 @@ function Discovery({ onAddBook, existingBooks = [] }) {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-8">
+    <div className="w-full max-w-6xl mx-auto py-8 px-4">
       <header className="mb-12 text-center">
         <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Discover Books</h1>
         <p className="text-slate-500 mt-2 text-lg">Explore millions of titles from the Open Library.</p>
@@ -100,24 +111,24 @@ function Discovery({ onAddBook, existingBooks = [] }) {
         {error && <p className="text-red-500 mt-4 text-sm font-medium">{error}</p>}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        <AnimatePresence mode="popLayout">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 transition-opacity duration-200 ${loading ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+        <AnimatePresence mode="popLayout" initial={false}>
           {books.map((book, index) => {
             const isAlreadyAdded = existingBooks.some(b => b.id === book.id);
             const isSaving = savingIds.has(book.id);
-
             return (
               <motion.div
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2, delay: index * 0.05 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25, delay: index * 0.03 }}
                 key={book.id}
+                className="h-full"
               >
-                <BookCard 
-                  book={book} 
-                  actionLabel={isSaving ? "Saving..." : isAlreadyAdded ? "In Library" : "Add to Library"} 
+                <BookCard
+                  book={book}
+                  actionLabel={isSaving ? "Saving..." : isAlreadyAdded ? "In Library" : "Add to Library"}
                   onAction={() => addToLibrary(book)}
                   disabled={isSaving || isAlreadyAdded}
                 />
