@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import BookCard from './BookCard';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 function Discovery({ onAddBook, existingBooks = [] }) {
   const [books, setBooks] = useState([]);
@@ -72,7 +72,7 @@ function Discovery({ onAddBook, existingBooks = [] }) {
     });
 
     try {
-      const res = await fetch('https://6a06d5f6c83ba8ad9b3df174.mockapi.io/books', {
+      const res = await fetch('/api/books', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
