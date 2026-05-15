@@ -13,7 +13,7 @@ export default function Navbar({ onSearchChange }) {
     <aside className="fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-brand-stone/10 p-6 flex flex-col shadow-sm">
       <NavLink to="/" className="flex items-center gap-2 text-brand-stone hover:text-brand-amber transition-colors mb-10 px-2">
         <BookMarked size={32} className="text-brand-amber" />
-        <span className="font-serif font-bold text-2xl tracking-tight italic">Book Vault</span>
+        <span className="font-inter font-bold text-2xl tracking-tight italic">Book Vault</span>
       </NavLink>
 
       <div className="relative mb-8 px-2">
