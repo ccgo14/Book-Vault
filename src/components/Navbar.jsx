@@ -45,9 +45,9 @@ export default function Navbar({ onSearchChange }) {
 
       <div className="mt-auto px-4 py-6 bg-brand-cream rounded-2xl text-center border border-brand-stone/5">
         <p className="text-[10px] text-brand-stone/50 font-medium leading-relaxed italic">
-          "A library is not a luxury but one of the necessities of life."
+          "A reader lives a thousand lives before he dies... The man who never reads lives only one."
         </p>
-        <p className="text-[10px] text-brand-stone/50 font-medium mt-2">- Henry Ward Beecher</p>
+        <p className="text-[10px] text-brand-stone/50 font-medium mt-2">- George R. R. Martin</p>
       </div>
     </aside>
   );
