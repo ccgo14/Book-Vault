@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-stone: #44403c;
+  --color-brand-amber: #d97706;
+}
+
+@layer base {
+  body {
+   
+    @apply bg-slate-50 text-slate-900 min-h-screen;
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-3xl p-6 shadow-sm hover:shadow-md transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-slate-900 text-white px-6 py-2 rounded-xl hover:bg-slate-800 transition-colors;
+  }
+}
+
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
