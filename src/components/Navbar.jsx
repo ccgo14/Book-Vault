@@ -16,15 +16,7 @@ export default function Navbar({ onSearchChange }) {
         <span className="font-inter font-bold text-2xl tracking-tight italic">Book Vault</span>
       </NavLink>
 
-      <div className="relative mb-8 px-2">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-stone/40" size={18} />
-        <input
-          type="text"
-          placeholder="Search library..."
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full bg-brand-stone/5 border-none rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-brand-amber/20 transition-all outline-none"
-        />
-      </div>
+     
 
       <nav className="flex flex-col gap-2">
         {navItems.map((item) => (
